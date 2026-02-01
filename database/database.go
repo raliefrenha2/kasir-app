@@ -27,3 +27,22 @@ func InitDB(connectionString string) (*sql.DB, error) {
 	log.Println("Database connected successfully")
 	return db, nil
 }
+
+func RunMigrations(db *sql.DB) error {
+	query := `
+	CREATE TABLE IF NOT EXISTS products (
+		id SERIAL PRIMARY KEY,
+		name VARCHAR(255) NOT NULL,
+		description TEXT,
+		price INT DEFAULT 0,
+		stock INT DEFAULT 0
+	);`
+
+	_, err := db.Exec(query)
+	if err != nil {
+		return err
+	}
+
+	log.Println("Migrations executed successfully")
+	return nil
+}
