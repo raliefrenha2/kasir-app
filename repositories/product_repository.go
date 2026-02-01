@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"database/sql"
+	"errors"
 	"kasir-api/models"
 )
 
@@ -50,12 +51,39 @@ func (repo *ProductRepository) Create(product *models.Product) error {
 
 func (repo *ProductRepository) Update(product *models.Product) error {
 	query := "UPDATE products SET name = $2, price = $3, stock = $4 WHERE id = $1"
-	err := repo.db.QueryRow(query, product.ID, product.Name, product.Price, product.Stock).Scan(&product.ID)
-	return err
+	// err := repo.db.QueryRow(query, product.ID, product.Name, product.Price, product.Stock).Scan(&product.ID)
+	result, err := repo.db.Exec(query, product.ID, product.Name, product.Price, product.Stock)
+	if err != nil {
+		return err
+	}
+
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rows == 0 {
+		return errors.New("product not found")
+	}
+
+	return nil
 }
 
 func (repo *ProductRepository) Delete(id int) error {
 	query := "DELETE FROM products WHERE id = $1"
-	err := repo.db.QueryRow(query, id).Scan(&id)
-	return err
+	result, err := repo.db.Exec(query, id)
+	if err != nil {
+		return err
+	}
+
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rows == 0 {
+		return errors.New("product not found")
+	}
+
+	return nil
 }
