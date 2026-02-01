@@ -26,7 +26,12 @@ func (s *CategoryService) Create(category models.Category) (models.Category, err
 }
 
 func (s *CategoryService) Update(id int, category models.Category) (models.Category, error) {
-	return s.repo.Update(id, category)
+	category.ID = id
+	err := s.repo.Update(category)
+	if err != nil {
+		return models.Category{}, err
+	}
+	return category, nil
 }
 
 func (s *CategoryService) Delete(id int) error {
