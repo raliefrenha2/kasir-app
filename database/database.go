@@ -36,6 +36,12 @@ func RunMigrations(db *sql.DB) error {
 		description TEXT,
 		price INT DEFAULT 0,
 		stock INT DEFAULT 0
+	);
+	
+	CREATE TABLE IF NOT EXISTS categories (
+		id SERIAL PRIMARY KEY,
+		name VARCHAR(255) NOT NULL,
+		description TEXT
 	);`
 
 	_, err := db.Exec(query)
